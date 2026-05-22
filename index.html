@@ -58,6 +58,22 @@ button{cursor:pointer;border:none;background:none;font-family:inherit}
   --hero-overlay:rgba(42,58,40,0.5);--particle-color:123,166,104;
   --section-divider:rgba(123,166,104,0.1);--accent-rgb:123,166,104;
 }
+/* === THEME: OCEAN (coastal blue + sand) === */
+[data-theme="ocean"]{
+  --bg:#F0F7FA;--bg-alt:#E0EFF5;--text:#1E3A4A;--text-muted:#5A8A9E;
+  --accent:#3A9EC2;--accent-glow:#5BB8D4;--card-bg:rgba(255,255,255,0.88);
+  --card-border:rgba(58,158,194,0.15);--nav-bg:rgba(240,247,250,0.92);
+  --hero-overlay:rgba(30,58,74,0.5);--particle-color:58,158,194;
+  --section-divider:rgba(58,158,194,0.1);--accent-rgb:58,158,194;
+}
+/* === THEME: SUNSET (warm amber + cream) === */
+[data-theme="sunset"]{
+  --bg:#FFF8F0;--bg-alt:#FFEEDD;--text:#4A2E1A;--text-muted:#9E7A5A;
+  --accent:#D4853A;--accent-glow:#E89E58;--card-bg:rgba(255,255,255,0.88);
+  --card-border:rgba(212,133,58,0.15);--nav-bg:rgba(255,248,240,0.92);
+  --hero-overlay:rgba(74,46,26,0.5);--particle-color:212,133,58;
+  --section-divider:rgba(212,133,58,0.1);--accent-rgb:212,133,58;
+}
 
 #loading-screen{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:99999;transition:opacity .6s ease}
 #loading-screen.fade-out{opacity:0;pointer-events:none}
@@ -195,6 +211,8 @@ textarea.form-input{resize:vertical;min-height:120px}
 .theme-dot[data-theme="blush"]{background:linear-gradient(135deg,#FFE8EF,#E8668A)}
 .theme-dot[data-theme="moonlight"]{background:linear-gradient(135deg,#1A1225,#D4A574)}
 .theme-dot[data-theme="garden"]{background:linear-gradient(135deg,#E8F0E0,#7BA668)}
+.theme-dot[data-theme="ocean"]{background:linear-gradient(135deg,#E0EFF5,#3A9EC2)}
+.theme-dot[data-theme="sunset"]{background:linear-gradient(135deg,#FFEEDD,#D4853A)}
 
 .voice-switcher{position:fixed;bottom:24px;left:24px;z-index:9000;display:flex;align-items:center;gap:8px}
 .voice-toggle{width:44px;height:44px;border-radius:50%;background:rgba(var(--particle-color),0.08);backdrop-filter:blur(16px);border:1px solid var(--card-border);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s;color:var(--accent)}
@@ -760,6 +778,8 @@ textarea.form-input{resize:vertical;min-height:120px}
   <button class="theme-dot active" data-theme="blush" role="radio" aria-checked="true" title="Blush" tabindex="0"></button>
   <button class="theme-dot" data-theme="moonlight" role="radio" aria-checked="false" title="Moonlight" tabindex="0"></button>
   <button class="theme-dot" data-theme="garden" role="radio" aria-checked="false" title="Garden" tabindex="0"></button>
+  <button class="theme-dot" data-theme="ocean" role="radio" aria-checked="false" title="Ocean" tabindex="0"></button>
+  <button class="theme-dot" data-theme="sunset" role="radio" aria-checked="false" title="Sunset" tabindex="0"></button>
 </div>
 
 <!-- Voice Switcher -->
@@ -1055,7 +1075,7 @@ function getPC(){return getComputedStyle(document.documentElement).getPropertyVa
 const LIGHT_THEME='__none__';
 function isLightTheme(){return document.documentElement.getAttribute('data-theme')===LIGHT_THEME}
 let compassActive=ls.get('compass','off')==='on';
-const ANIMS={};let animState={};let currentAnim=ls.get('anim','particles');
+const ANIMS={};let animState={};let currentAnim=ls.get('anim','paws');
 
 ANIMS.particles={init(){const c=compassActive?260:65;animState.parts=[];for(let i=0;i<c;i++)animState.parts.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*1.5,vy:(Math.random()-.5)*1.5})},tick(){ctx.clearRect(0,0,W,H);const pc=getPC();const p=animState.parts;if(!p)return;p.forEach(pt=>{const dx=pt.x-mx,dy=pt.y-my,d=Math.sqrt(dx*dx+dy*dy);if(d<180&&d>0){const f=((180-d)/180)*3;pt.vx+=dx/d*f;pt.vy+=dy/d*f}pt.vx*=.99;pt.vy*=.99;pt.x+=pt.vx;pt.y+=pt.vy;if(pt.x<0)pt.x=W;if(pt.x>W)pt.x=0;if(pt.y<0)pt.y=H;if(pt.y>H)pt.y=0});for(let i=0;i<p.length;i++)for(let j=i+1;j<p.length;j++){const dx=p[i].x-p[j].x,dy=p[i].y-p[j].y,d2=dx*dx+dy*dy;if(d2<19600){ctx.strokeStyle=`rgba(${pc},${1-d2/19600})`;ctx.lineWidth=.6;ctx.beginPath();ctx.moveTo(p[i].x,p[i].y);ctx.lineTo(p[j].x,p[j].y);ctx.stroke()}}p.forEach(pt=>{ctx.fillStyle=`rgba(${pc},.7)`;ctx.beginPath();ctx.arc(pt.x,pt.y,2,0,Math.PI*2);ctx.fill()})}};
 
@@ -1097,7 +1117,7 @@ function switchAnim(name){
   $$('.anim-dot').forEach(d=>d.classList.toggle('active',d.dataset.anim===name));
 }
 $$('.anim-dot').forEach(d=>{d.addEventListener('click',()=>switchAnim(d.dataset.anim));d.addEventListener('keydown',e=>{if(e.key==='Enter')switchAnim(d.dataset.anim)})});
-if(!ANIMS[currentAnim])currentAnim='particles';
+if(!ANIMS[currentAnim])currentAnim='paws';
 switchAnim(currentAnim);
 function animLoop(){if(ANIMS[currentAnim]&&ANIMS[currentAnim].tick)ANIMS[currentAnim].tick();requestAnimationFrame(animLoop)}
 animLoop();
